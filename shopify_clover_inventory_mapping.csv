@@ -1,0 +1,8 @@
+Feature,Shopify Object/API,Clover Object/API,1:1 Mapping?
+Product Variant & Options,"ProductVariant, ProductOption","ItemGroup, Item, Attribute/Option",✅ Approximate
+Inventory Level per Location,InventoryLevel,ItemStock,Partial (flat level only)
+Inventory Adjustments & Audit,"StockAdjustment, AuditLog",Manual only,❌ None in API
+PO & Vendor Management,"PurchaseOrder, POItem",None,❌ Not supported
+Sales Order & Reservation,"SalesOrder, reserved stock","Order, immediate stock decrement",Partial (no reservation)
+Forecasting & Reorder Suggestions,"Forecast, ReorderSuggestion",via 3rd-party apps only,❌ None native
+Batch / Serial Tracking,Supported via InventoryItem flags,Not supported,❌ None

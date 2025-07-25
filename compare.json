@@ -1,0 +1,98 @@
+1. Item / Product Representation
+Shopify
+	•	Product → contains ProductVariant objects, each with sku, barcode, images, options, tags, and pricing.
+	•	Supports variant options (size/color) via ProductOption.
+	•	Full support for images per variant and tags/categories.
+
+Clover
+	•	ItemGroup + multiple Item objects: variants managed with Attribute and Option classes.
+	•	Item holds price, SKU, and can be hidden (via hidden flag).
+	•	Supports categories, tags, and modifier groups for customization.
+￼ ￼ ￼ ￼
+
+Mapping
+	•	Shopify ProductVariant ↔ Clover Item
+	•	Shopify ProductOption ↔ Clover Attribute & Option
+	•	Shopify categories/tags ↔ Clover Category, ItemTag
+
+
+2. Inventory Levels & Tracking
+  Shopify
+  	•	InventoryItem metadata (cost, tracking flag) linked to variants.
+  	•	InventoryLevel supports per-location tracking (location_id) with available, committed, incoming, and adjustment reasons (via GraphQL mutations like inventoryAdjustQuantities).
+  	•	Supports batch/lot or serial tracking via custom attributes.
+  ￼
+
+  Clover
+  	•	Single ItemStock per merchant/minor multi-location. Tracks quantity and timestamps.
+  	•	No native batch or serial tracking.
+  	•	Stock updated directly; no structured adjustment history or reason fields.
+  ￼ ￼
+
+  Mapping
+  	•	Shopify InventoryItem ↔ Clover Item/ItemStock
+  	•	Shopify InventoryLevel ↔ Clover ItemStock (flat level)
+  	•	Shopify adjustment history ↛ Clover (not available)
+
+
+3. Purchase Orders (PO) & Receiving
+
+  Shopify
+  	•	External or app-managed POs; tracked via PurchaseOrder and POItem entities.
+  	•	Inventory receiving updates InventoryLevel and supports landed cost calculation.
+
+  Clover
+  	•	No native purchase order or vendor model.
+  	•	Reordering/receiving must be done externally or via third-party apps.
+  ￼
+
+  Mapping
+  	•	Shopify PO entities ↛ Clover (no equivalent objects)
+
+
+4. Sales Orders & Fulfillment
+
+  Shopify
+  	•	Full SalesOrder model via Order API or Fulfillment APIs in REST/GraphQL.
+  	•	Supports status lifecycle (pending → fulfilled/refunded) and stock reservation (committed).
+
+  Clover
+  	•	Order entities include items sold, payments, and immediate inventory deduction.
+  	•	No reservation phase; stock decremented immediately. Returns managed manually.
+  ￼ ￼
+
+  Mapping
+  	•	Shopify SalesOrder ↔ Clover Order
+  	•	Shopify reserved inventory ↛ Clover (decrement upon sale)
+  	•	Shopify returns via negative items ↛ Clover manual adjustments
+
+
+5. Forecasting & Replenishment
+
+  Shopify
+  	•	Not natively included in Shopify admin, but enabled via forecasting apps or custom scripts (e.g. Moving average, Prophet, auto ARIMA).
+  	•	Entities like Forecast and ReorderSuggestion support demand prediction and OOS prevention.
+  ￼
+
+  Clover
+  	•	No built-in forecasting or reorder suggestions via API.
+  	•	Available only through integrations like Thrive by Shopventory or QuickSync.
+  ￼ ￼
+
+  Mapping
+  	•	Shopify forecasting entities ↛ Clover
+
+
+6. Audits / Stock Adjustments
+
+  Shopify
+  	•	StockAdjustment with reason codes (damage, return, loss) plus AuditLog tracking entity-level changes.
+  	•	Supports cycle counts and physical audit reconciliation.
+
+  Clover
+  	•	Inventory adjustments are manual and recorded via dashboard only.
+  	•	Limited or no audit log recording in API.
+  ￼ ￼
+
+  Mapping
+  	•	Shopify StockAdjustment, AuditLog ↛ Clover (not available programmatically)

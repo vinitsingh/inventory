@@ -1,0 +1,541 @@
+openapi: 3.0.3
+info:
+  title: Full Inventory Management API
+  version: 1.0.0
+  description: |
+    # Overview
+    This API provides a comprehensive set of endpoints to manage inventory operations across a retail supply chain. It supports:
+    - Product catalog creation and variant tracking
+    - Real-time inventory tracking by location and batch/serial number
+    - Purchase and sales order lifecycle management
+    - Returns (full and partial) and adjustments
+    - Forecasting and automated replenishment
+    - Alerts and notifications for low stock, due orders, and more
+    - Complete audit logs and reporting interfaces
+
+    ## Authentication
+    All endpoints require an API key to be passed in the request header:
+    ```
+    Authorization: Bearer <your_api_key>
+    ```
+
+    ## Error Handling
+    Standard HTTP status codes are used. Common error codes include:
+    - 400 Bad Request
+    - 401 Unauthorized
+    - 404 Not Found
+    - 429 Too Many Requests
+    - 500 Internal Server Error
+
+    ## Rate Limiting
+    Requests are rate-limited. If the limit is exceeded, a `429 Too Many Requests` response will be returned.
+
+    ## Base URL
+    All endpoints are prefixed with:
+    ```
+    https://api-inventory.clover.com/v1
+    ```
+
+    For full details on each endpoint, refer to the `paths` section below.
+servers:
+  - url: https://api-inventory.clover.com/v1
+paths:
+  /products:
+    get:
+      summary: List all products
+      description: Returns all products in the catalog. Can be filtered and paginated.
+      responses:
+        '200': { description: A list of products }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    post:
+      summary: Create a new product
+      description: Adds a new product to the catalog.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201': { description: Product created }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Product found }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    put:
+      summary: Update a product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200': { description: Product updated }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    delete:
+      summary: Delete a product
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Product deleted }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /product-variants:
+    get:
+      summary: List all product variants
+      responses:
+        '200': { description: A list of product variants }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    post:
+      summary: Create a new product variant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductVariant'
+      responses:
+        '201': { description: Product variant created }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /inventory-items:
+    get:
+      summary: List inventory items
+      responses:
+        '200': { description: A list of inventory items }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    post:
+      summary: Create an inventory item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '201': { description: Inventory item created }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /sales-orders:
+    get:
+      summary: List all sales orders
+      responses:
+        '200': { description: A list of sales orders }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    post:
+      summary: Create a sales order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesOrder'
+      responses:
+        '201': { description: Sales order created }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+  /sales-orders/{id}/full-return:
+    post:
+      summary: Create a full return for a sales order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnOrder'
+      responses:
+        '201': { description: Full return processed }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+  /sales-orders/{id}/partial-return:
+    post:
+      summary: Create a partial return for a sales order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReturnOrder'
+      responses:
+        '201': { description: Partial return processed }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /alerts:
+    get:
+      summary: List active alerts
+      responses:
+        '200': { description: A list of alerts }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /notifications:
+    post:
+      summary: Send a notification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notification'
+      responses:
+        '200': { description: Notification sent }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /suppliers:
+    get:
+      summary: List all suppliers
+      responses:
+        '200': { description: List of suppliers }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    post:
+      summary: Create a new supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Supplier'
+      responses:
+        '201': { description: Supplier created }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /purchase-orders:
+    get:
+      summary: List all purchase orders
+      responses:
+        '200': { description: List of purchase orders }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+    post:
+      summary: Create a purchase order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PurchaseOrder'
+      responses:
+        '201': { description: Purchase order created }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+
+  /audit-logs:
+    get:
+      summary: Retrieve audit logs
+      responses:
+        '200': { description: List of audit logs }
+        '400': { description: Bad Request }
+        '401': { description: Unauthorized }
+        '404': { description: Not Found }
+        '429': { description: Too Many Requests }
+        '500': { description: Internal Server Error }
+        '502': { description: Bad Gateway }
+        '503': { description: Service Unavailable }
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        category_id: { type: string }
+        brand: { type: string }
+        tax_class_id: { type: string }
+        metadata: { type: object }
+
+    ProductVariant:
+      type: object
+      properties:
+        id: { type: string }
+        product_id: { type: string }
+        sku: { type: string }
+        barcode: { type: string }
+        price: { type: number }
+        cost: { type: number }
+        attributes: { type: object }
+        image_urls: { type: array, items: { type: string } }
+        is_active: { type: boolean }
+
+    InventoryItem:
+      type: object
+      properties:
+        id: { type: string }
+        variant_id: { type: string }
+        location_id: { type: string }
+        quantity_available: { type: integer }
+        quantity_committed: { type: integer }
+        quantity_incoming: { type: integer }
+        reorder_level: { type: integer }
+        max_stock_level: { type: integer }
+        batch_number: { type: string, nullable: true }
+        serial_number: { type: string, nullable: true }
+        expiration_date: { type: string, format: date, nullable: true }
+
+    SalesOrder:
+      type: object
+      properties:
+        id: { type: string }
+        customer_id: { type: string }
+        status: { type: string, enum: [draft, reserved, invoiced, shipped] }
+        order_date: { type: string, format: date }
+        delivery_date: { type: string, format: date }
+        invoice_id: { type: string }
+        notes: { type: string }
+
+    SalesOrderItem:
+      type: object
+      properties:
+        id: { type: string }
+        so_id: { type: string }
+        variant_id: { type: string }
+        quantity: { type: integer }
+        price: { type: number }
+
+    ReturnOrder:
+      type: object
+      properties:
+        id: { type: string }
+        source_order_id: { type: string }
+        variant_id: { type: string }
+        quantity: { type: integer }
+        return_type: { type: string, enum: [customer_return, supplier_return] }
+        reason: { type: string }
+        restocked: { type: boolean }
+
+    InventoryAdjustment:
+      type: object
+      properties:
+        id: { type: string }
+        item_id: { type: string }
+        type: { type: string, enum: [damage, return, loss] }
+        quantity_delta: { type: integer }
+        reason: { type: string }
+        adjusted_by: { type: string }
+        timestamp: { type: string, format: date-time }
+
+    InventoryForecast:
+      type: object
+      properties:
+        id: { type: string }
+        variant_id: { type: string }
+        period: { type: string, enum: [weekly, monthly] }
+        expected_demand: { type: integer }
+        suggested_reorder_qty: { type: integer }
+
+    ReorderSuggestion:
+      type: object
+      properties:
+        id: { type: string }
+        variant_id: { type: string }
+        location_id: { type: string }
+        suggested_qty: { type: integer }
+        created_on: { type: string, format: date }
+
+    Alert:
+      type: object
+      properties:
+        id: { type: string }
+        type: { type: string, enum: [low_stock, po_due] }
+        variant_id: { type: string }
+        location_id: { type: string }
+        triggered_on: { type: string, format: date-time }
+        resolved: { type: boolean }
+
+    Notification:
+      type: object
+      properties:
+        id: { type: string }
+        user_id: { type: string }
+        message: { type: string }
+        channel: { type: string, enum: [email, sms, push] }
+        sent_on: { type: string, format: date-time }
+
+    Supplier:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        contact_info: { type: string }
+        payment_terms: { type: string }
+
+    PurchaseOrder:
+      type: object
+      properties:
+        id: { type: string }
+        supplier_id: { type: string }
+        status: { type: string, enum: [draft, ordered, received, cancelled] }
+        created_by: { type: string }
+        order_date: { type: string, format: date }
+        delivery_date: { type: string, format: date }
+        landed_costs: { type: number }
+        notes: { type: string }
+
+    PurchaseOrderItem:
+      type: object
+      properties:
+        id: { type: string }
+        po_id: { type: string }
+        variant_id: { type: string }
+        quantity_ordered: { type: integer }
+        quantity_received: { type: integer }
+        unit_cost: { type: number }
+
+    AuditLog:
+      type: object
+      properties:
+        id: { type: string }
+        entity_type: { type: string }
+        entity_id: { type: string }
+        action: { type: string, enum: [create, update, delete] }
+        performed_by: { type: string }
+        timestamp: { type: string, format: date-time }
+        change_summary: { type: object }
+
+    InventoryTransaction:
+      type: object
+      properties:
+        id: { type: string }
+        item_id: { type: string }
+        type: { type: string, enum: [inbound, outbound, adjustment] }
+        reference_id: { type: string }
+        quantity: { type: integer }
+        date: { type: string, format: date }
+        source: { type: string }

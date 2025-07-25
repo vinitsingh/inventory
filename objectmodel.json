@@ -1,0 +1,176 @@
+can you build complete API definition for blow object model.
+Add alerts and notification and partial return use cases as well.
+
+1. Core Product Catalog
+  Product
+  ├── id
+  ├── name
+  ├── description
+  ├── category_id → Category
+  ├── brand
+  ├── tax_class_id → TaxClass
+  ├── metadata (JSON)
+
+  ProductVariant
+  ├── id
+  ├── product_id → Product
+  ├── sku
+  ├── barcode
+  ├── price
+  ├── cost
+  ├── attributes (e.g., size, color)
+  ├── image_urls
+  ├── is_active
+
+  Category
+  ├── id
+  ├── name
+  ├── parent_category_id (nullable)
+
+  TaxClass
+  ├── id
+  ├── name
+  ├── rate
+
+2. Inventory Tracking
+
+  InventoryItem
+  ├── id
+  ├── variant_id → ProductVariant
+  ├── location_id → Location
+  ├── quantity_available
+  ├── quantity_committed
+  ├── quantity_incoming
+  ├── reorder_level
+  ├── max_stock_level
+  ├── batch_number / serial_number (optional)
+  ├── expiration_date (optional)
+
+  Location
+  ├── id
+  ├── name
+  ├── address
+
+3. Purchase Order Management
+
+  Supplier
+  ├── id
+  ├── name
+  ├── contact_info
+  ├── payment_terms
+
+  PurchaseOrder
+  ├── id
+  ├── supplier_id → Supplier
+  ├── status (draft, ordered, received, cancelled)
+  ├── created_by
+  ├── order_date
+  ├── delivery_date
+  ├── landed_costs
+  ├── notes
+
+  PurchaseOrderItem
+  ├── id
+  ├── po_id → PurchaseOrder
+  ├── variant_id → ProductVariant
+  ├── quantity_ordered
+  ├── quantity_received
+  ├── unit_cost
+
+4. Sales Order Management
+
+  Customer
+  ├── id
+  ├── name
+  ├── email
+  ├── phone
+  ├── shipping_address
+
+  SalesOrder
+  ├── id
+  ├── customer_id → Customer
+  ├── status (draft, reserved, invoiced, shipped)
+  ├── order_date
+  ├── delivery_date
+  ├── invoice_id
+  ├── notes
+
+  SalesOrderItem
+  ├── id
+  ├── so_id → SalesOrder
+  ├── variant_id → ProductVariant
+  ├── quantity
+  ├── price
+
+5. Returns & Adjustments
+
+  InventoryAdjustment
+  ├── id
+  ├── item_id → InventoryItem
+  ├── type (damage, return, loss)
+  ├── quantity_delta (+/-)
+  ├── reason
+  ├── adjusted_by
+  ├── timestamp
+
+  ReturnOrder
+  ├── id
+  ├── source_order_id (PO or SO)
+  ├── variant_id → ProductVariant
+  ├── quantity
+  ├── return_type (customer_return, supplier_return)
+  ├── reason
+  ├── restocked (true/false)
+
+6. Forecasting & Replenishment
+
+  InventoryForecast
+  ├── id
+  ├── variant_id → ProductVariant
+  ├── period (weekly/monthly)
+  ├── expected_demand
+  ├── suggested_reorder_qty
+
+  ReorderSuggestion
+  ├── id
+  ├── variant_id → ProductVariant
+  ├── location_id
+  ├── suggested_qty
+  ├── created_on
+
+7. Reports & Audit Logs
+
+  AuditLog
+  ├── id
+  ├── entity_type (Product, PO, etc.)
+  ├── entity_id
+  ├── action (create/update/delete)
+  ├── performed_by
+  ├── timestamp
+  ├── change_summary (JSON diff)
+
+  InventoryTransaction
+  ├── id
+  ├── item_id → InventoryItem
+  ├── type (inbound, outbound, adjustment)
+  ├── reference_id (PO/SO/Adjustment)
+  ├── quantity
+  ├── date
+  ├── source (API, manual, system)
+
+8. Alerts & Notifications
+
+  Alert
+  ├── id
+  ├── type (low_stock, po_due, etc.)
+  ├── variant_id
+  ├── location_id
+  ├── triggered_on
+  ├── resolved (true/false)
+
+  Notification
+  ├── id
+  ├── user_id
+  ├── message
+  ├── channel (email, sms, push)
+  ├── sent_on
