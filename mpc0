@@ -1,0 +1,27 @@
+Merchant's Problem:
+Merchants increasingly see traffic and transactions initiated by AI agents. As of now most of the merchant does not understand if it's legitimate or not. Most of them are allowing the access/purchase. 
+
+Value Proposition:
+1. Unified Trust Verification Layer
+Instead of merchants integrating TAP, AP2, and KYA separately (each with different cryptography, key registries, and API standards), your engine:
+	•	Provides a single verification interface
+Merchants get “trust-as-a-service” — one integration point to accept verified AI agents from multiple ecosystems.
+
+2. Risk Reduction & Fraud Prevention
+AI-driven fraud (e.g., fake agents placing orders or scraping merchant data) will rise sharply.
+By verifying agent authenticity:
+	•	It reduce fraudulent transactions
+	•	Prevent bot impersonation
+	•	Enforce transaction limits or risk rules per agent identity
+Reduces chargebacks, fake orders, and account takeovers; increases compliance readiness.
+
+3. Agent Dynamic Trust Scoring 
+By combining multiple protocols, we can compute a composite trust score per agent/for agent. 
+Merchants can automatically:
+	•	Approve / decline transactions
+	•	Adjust credit limits, offers, or pricing dynamically.
+  
+4. Data & Analytics
+Because every verified request passes through orchestration:
+	•	Merchants get analytics on which agents shop, from where, and how often.
+	•	Over time, this data is monetizable (agent behavior, conversion optimization, fraud intelligence).
